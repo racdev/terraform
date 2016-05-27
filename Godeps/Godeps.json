@@ -1,7 +1,7 @@
 {
 	"ImportPath": "github.com/hashicorp/terraform",
 	"GoVersion": "go1.6",
-	"GodepVersion": "v67",
+	"GodepVersion": "v69",
 	"Packages": [
 		"./..."
 	],
@@ -462,6 +462,11 @@
 			"Rev": "2cc71659118a868dc7544a7ef0808eb42d487011"
 		},
 		{
+			"ImportPath": "github.com/aws/aws-sdk-go/service/elastictranscoder",
+			"Comment": "v1.1.23",
+			"Rev": "2cc71659118a868dc7544a7ef0808eb42d487011"
+		},
+		{
 			"ImportPath": "github.com/aws/aws-sdk-go/service/elb",
 			"Comment": "v1.1.23",
 			"Rev": "2cc71659118a868dc7544a7ef0808eb42d487011"
@@ -469,11 +474,6 @@
 		{
 			"ImportPath": "github.com/aws/aws-sdk-go/service/emr",
 			"Comment": "v1.1.15",
-			"Rev": "2cc71659118a868dc7544a7ef0808eb42d487011"
-		},
-		{
-			"ImportPath": "github.com/aws/aws-sdk-go/service/emr/emriface",
-			"Comment": "v1.1.23",
 			"Rev": "2cc71659118a868dc7544a7ef0808eb42d487011"
 		},
 		{
@@ -1295,6 +1295,11 @@
 		{
 			"ImportPath": "github.com/rainycape/unidecode",
 			"Rev": "cb7f23ec59bec0d61b19c56cd88cee3d0cc1870c"
+		},
+		{
+			"ImportPath": "github.com/ryanuber/columnize",
+			"Comment": "v2.1.0",
+			"Rev": "983d3a5fab1bf04d1b412465d2d9f8430e2e917e"
 		},
 		{
 			"ImportPath": "github.com/satori/go.uuid",
