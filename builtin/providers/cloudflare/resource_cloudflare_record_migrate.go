@@ -10,11 +10,11 @@ import (
 	"github.com/mitchellh/cloudflare-go"
 )
 
-func resourceAwsCloudFlareRecordMigrateState(
+func resourceCloudFlareRecordMigrateState(
 	v int, is *terraform.InstanceState, meta interface{}) (*terraform.InstanceState, error) {
 	switch v {
 	case 0:
-		log.Println("[INFO] Found AWS CloudFlare Record State v0; migrating to v1")
+		log.Println("[INFO] Found CloudFlare Record State v0; migrating to v1")
 		return migrateCloudFlareRecordStateV0toV1(is, meta)
 	default:
 		return is, fmt.Errorf("Unexpected schema version: %d", v)

@@ -18,7 +18,7 @@ func resourceCloudFlareRecord() *schema.Resource {
 		Delete: resourceCloudFlareRecordDelete,
 
 		SchemaVersion: 1,
-		MigrateState:  resourceAwsCloudFlareRecordMigrateState,
+		MigrateState:  resourceCloudFlareRecordMigrateState,
 		Schema: map[string]*schema.Schema{
 			"domain": &schema.Schema{
 				Type:     schema.TypeString,
