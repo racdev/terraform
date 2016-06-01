@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elastictranscoder"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -21,7 +22,6 @@ func resourceAwsElasticTranscoderPipeline() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"arn": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 
@@ -40,7 +40,9 @@ func resourceAwsElasticTranscoderPipeline() *schema.Resource {
 
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
 				ValidateFunc: func(v interface{}, k string) (ws []string, errors []error) {
 					value := v.(string)
 					if !regexp.MustCompile(`^[.0-9A-Za-z-_]+$`).MatchString(value) {
@@ -145,11 +147,18 @@ func resourceAwsElasticTranscoderPipelineCreate(d *schema.ResourceData, meta int
 		AwsKmsKeyArn:    getStringPtr(d, "aws_kms_key_arn"),
 		ContentConfig:   expandETPiplineOutputConfig(d, "content_config"),
 		InputBucket:     aws.String(d.Get("input_bucket").(string)),
-		Name:            getStringPtr(d, "name"),
 		Notifications:   expandETNotifications(d),
 		OutputBucket:    getStringPtr(d, "output_bucket"),
 		Role:            getStringPtr(d, "role"),
 		ThumbnailConfig: expandETPiplineOutputConfig(d, "thumbnail_config"),
+	}
+
+	if name, ok := d.GetOk("name"); ok {
+		req.Name = aws.String(name.(string))
+	} else {
+		name := resource.PrefixedUniqueId("tf-et-")
+		d.Set("name", name)
+		req.Name = aws.String(name)
 	}
 
 	if (req.OutputBucket == nil && (req.ContentConfig == nil || req.ContentConfig.Bucket == nil)) ||
@@ -363,7 +372,9 @@ func resourceAwsElasticTranscoderPipelineRead(d *schema.ResourceData, meta inter
 
 	notifications := flattenETNotifications(pipeline.Notifications)
 	if notifications != nil {
-		d.Set("notifications", notifications)
+		if err := d.Set("notifications", notifications); err != nil {
+			return fmt.Errorf("error setting notifications: %s", err)
+		}
 	}
 
 	if pipeline.OutputBucket != nil {

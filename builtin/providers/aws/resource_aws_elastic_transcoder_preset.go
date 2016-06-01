@@ -7,6 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/elastictranscoder"
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -19,7 +20,6 @@ func resourceAwsElasticTranscoderPreset() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"arn": &schema.Schema{
 				Type:     schema.TypeString,
-				Optional: true,
 				Computed: true,
 			},
 
@@ -104,7 +104,8 @@ func resourceAwsElasticTranscoderPreset() *schema.Resource {
 
 			"name": &schema.Schema{
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+				Computed: true,
 				ForceNew: true,
 			},
 
@@ -318,9 +319,16 @@ func resourceAwsElasticTranscoderPresetCreate(d *schema.ResourceData, meta inter
 		Audio:       expandETAudioParams(d),
 		Container:   aws.String(d.Get("container").(string)),
 		Description: getStringPtr(d, "description"),
-		Name:        aws.String(d.Get("name").(string)),
 		Thumbnails:  expandETThumbnails(d),
 		Video:       exapndETVideoParams(d),
+	}
+
+	if name, ok := d.GetOk("name"); ok {
+		req.Name = aws.String(name.(string))
+	} else {
+		name := resource.PrefixedUniqueId("tf-et-preset-")
+		d.Set("name", name)
+		req.Name = aws.String(name)
 	}
 
 	log.Printf("[DEBUG] Elastic Transcoder Preset create opts: %s", req)
